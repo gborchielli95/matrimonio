@@ -85,7 +85,7 @@ if (rsvpForm) {
     submitBtn.textContent = 'Invio in corso…';
 
     /* invia al server Google Apps Script */
-    const API_URL   = 'https://script.google.com/macros/s/AKfycbyGoV1ZiBOxv9wp8iGqP4BRQqgLLHlF7AJ1ooAOEqqW1XN7Wb2rpJ_4EtS4gIG2BcGdSw/exec';
+    const API_URL   = 'https://script.google.com/macros/s/AKfycbyBaSb-kdWh7cP6DRZNwFVeAlAqdcDG5EifonlaqX4_iHKiNq-WTkV9iINunFUV8pl2Qw/exec';
     const partecipa = partecipaEl.value;
     const url       = new URL(API_URL);
     url.searchParams.set('action',    'add');
