@@ -84,6 +84,27 @@ if (rsvpForm) {
     submitBtn.disabled    = true;
     submitBtn.textContent = 'Invio in corso…';
 
+    /* salva in localStorage (stesso formato dell'admin) */
+    const partecipa   = partecipaEl.value;
+    const nome        = (document.getElementById('nome')?.value || '').trim();
+    const cognome     = (document.getElementById('cognome')?.value || '').trim();
+    const numeroEl    = document.getElementById('numero_ospiti');
+    const numero      = partecipa === 'si' ? (parseInt(numeroEl?.value) || 1) : 0;
+    const note        = (document.getElementById('note')?.value || '').trim();
+    const cap         = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s;
+    const STORAGE_KEY = 'wedding_guests_v2';
+    const guests      = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    guests.push({
+      id:       Date.now(),
+      nome:     cap(nome),
+      cognome:  cap(cognome),
+      partecipa,
+      numero,
+      note,
+      aggiunto: new Date().toLocaleDateString('it-IT')
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(guests));
+
     /* piccolo delay per feedback visivo */
     setTimeout(() => {
       const card    = document.getElementById('rsvpCard');
