@@ -16,6 +16,7 @@ All pages share a single `style.css` and `script.js`. The CSS uses CSS custom pr
 | `storia.html` | Photo gallery with lightbox |
 | `info.html` | Logistics, maps, dress code |
 | `rsvp.html` | RSVP form |
+| `lista-nozze.html` | Wedding gift list page — add new `info-card` blocks here as new list links are created |
 | `admin.html` | Private guest list manager (not committed to git — see below) |
 | `script.js` | Countdown, mobile nav, scroll animations, FAQ accordion, RSVP form handler |
 
@@ -54,7 +55,7 @@ Push to `main` branch triggers automatic GitHub Pages deployment. To push, a Git
 
 ## Pending items
 
-- Lista nozze link (`index.html`) points to `href="#lista-nozze"` — placeholder to replace with real URL
+- `lista-nozze.html` currently has only Amazon — add more gift list cards as new platforms are set up
 
 ## Fonts
 
