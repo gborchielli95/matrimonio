@@ -54,8 +54,7 @@ Push to `main` branch triggers automatic GitHub Pages deployment. To push, a Git
 
 ## Pending items
 
-- `faq.html` does not exist yet (`index.html:189` links to it)
-- Lista nozze link (`index.html:146`) points to `href="#lista-nozze"` — placeholder to replace with real URL
+- Lista nozze link (`index.html`) points to `href="#lista-nozze"` — placeholder to replace with real URL
 
 ## Fonts
 
