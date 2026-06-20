@@ -605,6 +605,14 @@
       }
     }
 
+    /* ── DATE FORMAT ── */
+    function formatDate(d) {
+      if (!d) return '—';
+      const date = new Date(d);
+      if (isNaN(date.getTime())) return d;
+      return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+    }
+
     /* ── FILTER ── */
     function setFilter(f, el) {
       currentFilter = f;
@@ -678,7 +686,7 @@
           </td>
           <td style="text-align:center;">${g.partecipa === 'si' ? g.numero : '—'}</td>
           <td style="color:var(--text); font-size:0.85rem;">${g.note || '—'}</td>
-          <td style="color:var(--text); font-size:0.82rem; white-space:nowrap;">${g.aggiunto}</td>
+          <td style="color:var(--text); font-size:0.82rem; white-space:nowrap;">${formatDate(g.aggiunto)}</td>
           <td>
             <button class="del-btn" onclick="deleteGuest('${g.id}')" title="Elimina">🗑</button>
           </td>
