@@ -480,12 +480,13 @@
 
   <script>
     /* ── CONFIG ── */
-    const PASSWORD   = 'gs2026';      // ← cambia questa password
-    const STORAGE_KEY = 'wedding_guests_v2';
+    const PASSWORD = 'gs2026';
+    const API_URL  = 'https://script.google.com/macros/s/AKfycbyGoV1ZiBOxv9wp8iGqP4BRQqgLLHlF7AJ1ooAOEqqW1XN7Wb2rpJ_4EtS4gIG2BcGdSw/exec';
 
     let currentFilter = 'tutti';
     let sortField     = 'cognome';
     let sortDir       = 1;
+    let cachedGuests  = [];
 
     /* ── AUTH ── */
     document.getElementById('loginForm').addEventListener('submit', e => {
@@ -508,18 +509,29 @@
     if (sessionStorage.getItem('admin_ok') === '1') showAdmin();
 
     function showAdmin() {
-      document.getElementById('loginView').style.display  = 'none';
-      document.getElementById('adminView').style.display  = 'block';
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'block';
+      loadGuests();
+    }
+
+    /* ── API ── */
+    async function api(params) {
+      const url = new URL(API_URL);
+      Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+      const res = await fetch(url.toString());
+      return res.json();
+    }
+
+    async function loadGuests() {
+      document.getElementById('guestListContainer').innerHTML =
+        '<div class="empty-state"><div class="icon">⏳</div><p>Caricamento…</p></div>';
+      try {
+        cachedGuests = await api({ action: 'list' });
+      } catch(err) {
+        showToast('Errore connessione al server');
+        cachedGuests = [];
+      }
       renderGuests();
-    }
-
-    /* ── DATA ── */
-    function getGuests() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    }
-
-    function saveGuests(list) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
 
     /* ── ADD FORM ── */
@@ -527,47 +539,59 @@
       document.getElementById('numGroup').style.display = this.value === 'si' ? 'block' : 'none';
     });
 
-    document.getElementById('addForm').addEventListener('submit', e => {
+    document.getElementById('addForm').addEventListener('submit', async e => {
       e.preventDefault();
       const partecipa = document.getElementById('addPartecipa').value;
-      const guests = getGuests();
-      guests.push({
-        id:        Date.now(),
-        nome:      cap(document.getElementById('addNome').value.trim()),
-        cognome:   cap(document.getElementById('addCognome').value.trim()),
-        partecipa,
-        numero:    partecipa === 'si' ? (parseInt(document.getElementById('addNumero').value) || 1) : 0,
-        note:      document.getElementById('addNote').value.trim(),
-        aggiunto:  new Date().toLocaleDateString('it-IT')
-      });
-      saveGuests(guests);
-      renderGuests();
-      e.target.reset();
-      document.getElementById('addNumero').value = 1;
-      document.getElementById('numGroup').style.display = 'block';
-      document.getElementById('addNome').focus();
-      showToast('Invitato aggiunto ✓');
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Salvataggio…';
+      try {
+        await api({
+          action:   'add',
+          nome:     document.getElementById('addNome').value.trim(),
+          cognome:  document.getElementById('addCognome').value.trim(),
+          partecipa,
+          numero:   partecipa === 'si' ? (document.getElementById('addNumero').value || 1) : 0,
+          note:     document.getElementById('addNote').value.trim()
+        });
+        await loadGuests();
+        e.target.reset();
+        document.getElementById('addNumero').value = 1;
+        document.getElementById('numGroup').style.display = 'block';
+        document.getElementById('addNome').focus();
+        showToast('Invitato aggiunto ✓');
+      } catch(err) {
+        showToast('Errore connessione');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Aggiungi';
+      }
     });
 
     /* ── DELETE ── */
-    function deleteGuest(id) {
+    async function deleteGuest(id) {
       if (!confirm('Rimuovere questo invitato?')) return;
-      saveGuests(getGuests().filter(g => g.id !== id));
-      renderGuests();
-      showToast('Invitato rimosso');
+      try {
+        await api({ action: 'delete', id });
+        await loadGuests();
+        showToast('Invitato rimosso');
+      } catch(err) {
+        showToast('Errore connessione');
+      }
     }
 
     /* ── TOGGLE PARTECIPA ── */
-    function cyclePartecipa(id) {
-      const guests = getGuests();
-      const g = guests.find(g => g.id === id);
+    async function cyclePartecipa(id) {
+      const g = cachedGuests.find(g => String(g.id) === String(id));
       if (!g) return;
       const cycle = { si: 'no', no: 'da_confermare', da_confermare: 'si' };
-      g.partecipa = cycle[g.partecipa] || 'si';
-      if (g.partecipa === 'si' && g.numero === 0) g.numero = 1;
-      if (g.partecipa !== 'si') g.numero = 0;
-      saveGuests(guests);
-      renderGuests();
+      const newPartecipa = cycle[g.partecipa] || 'si';
+      try {
+        await api({ action: 'toggle', id, partecipa: newPartecipa });
+        await loadGuests();
+      } catch(err) {
+        showToast('Errore connessione');
+      }
     }
 
     /* ── FILTER ── */
@@ -590,27 +614,24 @@
 
     /* ── RENDER ── */
     function renderGuests() {
-      const all     = getGuests();
+      const all     = cachedGuests;
       const search  = (document.getElementById('searchInput')?.value || '').toLowerCase();
       const presenti = all.filter(g => g.partecipa === 'si');
       const assenti  = all.filter(g => g.partecipa === 'no');
 
-      /* stats */
       document.getElementById('statTotale').textContent   = all.length;
       document.getElementById('statPresenti').textContent = presenti.length;
-      document.getElementById('statPersone').textContent  = presenti.reduce((s, g) => s + (g.numero || 0), 0);
+      document.getElementById('statPersone').textContent  = presenti.reduce((s, g) => s + (Number(g.numero) || 0), 0);
       document.getElementById('statAssenti').textContent  = assenti.length;
 
-      /* filter */
       let list = all.filter(g => {
         const matchFilter = currentFilter === 'tutti' || g.partecipa === currentFilter;
         const matchSearch = !search ||
-          g.nome.toLowerCase().includes(search) ||
-          g.cognome.toLowerCase().includes(search);
+          (g.nome || '').toLowerCase().includes(search) ||
+          (g.cognome || '').toLowerCase().includes(search);
         return matchFilter && matchSearch;
       });
 
-      /* sort */
       list.sort((a, b) => {
         let va = a[sortField] || '', vb = b[sortField] || '';
         if (typeof va === 'string') va = va.toLowerCase();
@@ -630,9 +651,9 @@
       }
 
       const badgeMap = {
-        si:             '<span class="badge badge-si">✅ Sì</span>',
-        no:             '<span class="badge badge-no">❌ No</span>',
-        da_confermare:  '<span class="badge" style="background:#fff8e1;color:#b7791f;">⏳ Da conf.</span>'
+        si:            '<span class="badge badge-si">✅ Sì</span>',
+        no:            '<span class="badge badge-no">❌ No</span>',
+        da_confermare: '<span class="badge" style="background:#fff8e1;color:#b7791f;">⏳ Da conf.</span>'
       };
 
       const rows = list.map(g => `
@@ -640,7 +661,7 @@
           <td><strong>${g.cognome}</strong></td>
           <td>${g.nome}</td>
           <td>
-            <button onclick="cyclePartecipa(${g.id})" title="Clicca per cambiare stato" style="background:none;border:none;cursor:pointer;padding:0;">
+            <button onclick="cyclePartecipa('${g.id}')" title="Clicca per cambiare stato" style="background:none;border:none;cursor:pointer;padding:0;">
               ${badgeMap[g.partecipa] || ''}
             </button>
           </td>
@@ -648,7 +669,7 @@
           <td style="color:var(--text); font-size:0.85rem;">${g.note || '—'}</td>
           <td style="color:var(--text); font-size:0.82rem; white-space:nowrap;">${g.aggiunto}</td>
           <td>
-            <button class="del-btn" onclick="deleteGuest(${g.id})" title="Elimina">🗑</button>
+            <button class="del-btn" onclick="deleteGuest('${g.id}')" title="Elimina">🗑</button>
           </td>
         </tr>`).join('');
 
@@ -671,10 +692,9 @@
 
     /* ── EXPORT ── */
     function exportCSV() {
-      const guests = getGuests();
-      if (!guests.length) { showToast('Nessun dato da esportare'); return; }
+      if (!cachedGuests.length) { showToast('Nessun dato da esportare'); return; }
       const header = 'Cognome,Nome,Partecipa,N° Persone,Note,Aggiunto';
-      const rows = guests.map(g =>
+      const rows = cachedGuests.map(g =>
         `"${g.cognome}","${g.nome}","${g.partecipa}","${g.partecipa === 'si' ? g.numero : 0}","${(g.note||'').replace(/"/g,'""')}","${g.aggiunto}"`
       );
       const csv  = [header, ...rows].join('\n');
@@ -687,14 +707,14 @@
     }
 
     function exportText() {
-      const presenti = getGuests().filter(g => g.partecipa === 'si');
+      const presenti = cachedGuests.filter(g => g.partecipa === 'si');
       if (!presenti.length) { showToast('Nessun invitato confermato'); return; }
-      const totalPersone = presenti.reduce((s, g) => s + (g.numero || 0), 0);
+      const totalPersone = presenti.reduce((s, g) => s + (Number(g.numero) || 0), 0);
       const lines = [
         `MATRIMONIO GIANLUCA & SARA — 10 Dicembre 2026`,
         `Lista invitati confermati (${new Date().toLocaleDateString('it-IT')})`,
         `─────────────────────────────────────────`,
-        ...presenti.map((g, i) => `${i+1}. ${g.cognome} ${g.nome}${g.numero > 1 ? ` (+${g.numero-1})` : ''}${g.note ? ' — ' + g.note : ''}`),
+        ...presenti.map((g, i) => `${i+1}. ${g.cognome} ${g.nome}${g.numero > 1 ? ` (+${Number(g.numero)-1})` : ''}${g.note ? ' — ' + g.note : ''}`),
         `─────────────────────────────────────────`,
         `Totale: ${presenti.length} risposte · ${totalPersone} persone`
       ].join('\n');
@@ -712,9 +732,6 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
     }
-
-    /* ── UTILS ── */
-    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s; }
   </script>
 
 </body>
