@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conferma Presenza — Matrimonio G&S</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">G & S</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="storia.html">Le Nostre Foto</a></li>
+      <li><a href="info.html">Info & Logistica</a></li>
+      <li><a href="rsvp.html" class="active">Conferma Presenza</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-header">
+    <span class="script">Conferma la tua presenza</span>
+    <h1>Sei dei nostri?</h1>
+    <p>Compilaci il form entro il <strong>30 Settembre 2026</strong>.<br>La tua risposta ci aiuterà ad organizzare al meglio la giornata!</p>
+  </div>
+
+  <section class="section">
+    <div class="container-sm">
+
+      <!-- MESSAGGIO DI SUCCESSO -->
+      <div class="alert alert-success" id="successMessage" style="display:none; font-size:1.1rem; padding: 2.5rem;">
+        <div style="font-size:3rem; margin-bottom:1rem;">🎊</div>
+        <p style="font-family:'Playfair Display',serif; font-size:1.4rem; color: #1b5e20; margin-bottom:0.75rem;">Grazie mille!</p>
+        <p style="font-weight:400; color:#2e7d32;">La tua risposta è stata ricevuta. Non vediamo l'ora di festeggiare con te!</p>
+        <p style="margin-top:1rem;"><a href="index.html" class="btn" style="font-size:0.8rem;">← Torna alla home</a></p>
+      </div>
+
+      <!-- MESSAGGIO DI ERRORE (non più usato, lasciato per compatibilità) -->
+      <div class="alert alert-error" id="errorMessage" style="display:none;"></div>
+
+      <!-- FORM -->
+      <div class="card" id="rsvpCard">
+        <form id="rsvpForm" novalidate>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome">Nome *</label>
+              <input type="text" id="nome" name="nome" placeholder="es. Marco" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="cognome">Cognome *</label>
+              <input type="text" id="cognome" name="cognome" placeholder="es. Rossi" required autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Partecipi al matrimonio? *</label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="partecipa" value="si" required>
+                🎉 Sì, ci sarò!
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="partecipa" value="no">
+                😢 Purtroppo no
+              </label>
+            </div>
+          </div>
+
+          <div class="guests-section" id="guests-section">
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label for="numero_ospiti">Quante persone verranno (incluso te)?</label>
+              <input
+                type="number"
+                id="numero_ospiti"
+                name="numero_ospiti"
+                min="1" max="20"
+                value="1"
+                style="max-width:120px;"
+              >
+            </div>
+            <p style="font-size:0.88rem; color: var(--text); margin:0;">
+              Inserisci il totale: tu + eventuali accompagnatori.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="note">Note / Intolleranze alimentari</label>
+            <textarea
+              id="note"
+              name="note"
+              rows="3"
+              placeholder="es. intolleranza al glutine, allergia ai crostacei, seggiolone per bambino…"
+            ></textarea>
+          </div>
+
+          <div class="submit-area">
+            <button type="submit" class="btn" id="submitBtn">
+              Conferma la Presenza 💌
+            </button>
+            <p style="margin-top:1rem; font-size:0.82rem; color:var(--text);">
+              Riceveremo la tua risposta e ti contatteremo per i dettagli finali.
+            </p>
+          </div>
+
+        </form>
+      </div>
+
+
+    </div>
+  </section>
+
+  <footer>
+    <span class="script">Gianluca &amp; Sara</span>
+    <p>10 Dicembre 2026 · Peschiera Borromeo (MI)</p>
+    <p>Chiesa di San Riccardo Pampuri · ore 11:00</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

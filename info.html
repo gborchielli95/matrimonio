@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Info & Logistica — Matrimonio G&S</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">G & S</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="storia.html">Le Nostre Foto</a></li>
+      <li><a href="info.html" class="active">Info & Logistica</a></li>
+      <li><a href="rsvp.html">Conferma Presenza</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-header">
+    <span class="script">Come arrivare e cosa sapere</span>
+    <h1>Info &amp; Logistica</h1>
+    <p>Tutto quello che ti serve per organizzarti al meglio per il 10 Dicembre.</p>
+  </div>
+
+  <!-- CERIMONIA -->
+  <section class="section">
+    <div class="container">
+
+      <div class="section-title fade-up">
+        <span class="script">La Cerimonia</span>
+        <h2>Chiesa di San Riccardo Pampuri</h2>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card fade-up">
+          <div class="icon">📍</div>
+          <h3>Indirizzo</h3>
+          <p>
+            Chiesa di San Riccardo Pampuri<br>
+            Peschiera Borromeo (MI)<br><br>
+            <a href="https://maps.google.com/?q=Chiesa+San+Riccardo+Pampuri+Peschiera+Borromeo" target="_blank" rel="noopener">
+              Apri in Google Maps →
+            </a>
+          </p>
+        </div>
+
+        <div class="info-card fade-up">
+          <div class="icon">🕙</div>
+          <h3>Orario</h3>
+          <p>
+            La cerimonia inizierà alle<br>
+            <strong style="font-size:1.3rem;">ore 11:00</strong><br><br>
+            Vi chiediamo di essere presenti<br>
+            almeno <strong>15 minuti prima</strong>.
+          </p>
+        </div>
+
+        <div class="info-card fade-up">
+          <div class="icon">🅿️</div>
+          <h3>Parcheggio</h3>
+          <p>
+            Sono disponibili parcheggi nelle vie adiacenti alla chiesa.<br><br>
+            Si consiglia di arrivare con qualche minuto di anticipo per trovare posto senza stress.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="map-wrap fade-up">
+        <iframe
+          src="https://maps.google.com/maps?q=Peschiera+Borromeo+MI+Italia&output=embed"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mappa Peschiera Borromeo"
+        ></iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RICEVIMENTO -->
+  <section class="section section-alt">
+    <div class="container">
+
+      <div class="section-title fade-up">
+        <span class="script">Il Ricevimento</span>
+        <h2>Ristorante Il Bocchi · Comazzo</h2>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card fade-up">
+          <div class="icon">🍽️</div>
+          <h3>Dove</h3>
+          <p>
+            <strong>Ristorante Il Bocchi</strong><br>
+            Comazzo (LO)<br><br>
+            <a href="https://maps.google.com/?q=Il+Bocchi+Comazzo" target="_blank" rel="noopener">
+              Apri in Google Maps →
+            </a>
+          </p>
+        </div>
+
+        <div class="info-card fade-up">
+          <div class="icon">🚗</div>
+          <h3>Come raggiungerlo</h3>
+          <p>
+            Il ristorante si trova a<br>
+            circa <strong>15 minuti</strong> dalla chiesa.<br><br>
+            Indicazioni precise saranno<br>
+            comunicate agli invitati confermati.
+          </p>
+        </div>
+
+        <div class="info-card fade-up">
+          <div class="icon">🥂</div>
+          <h3>Il Programma</h3>
+          <p>
+            Seguirà il ricevimento con<br>
+            pranzo e festeggiamenti.<br><br>
+            Preparatevi a festeggiare con noi!
+          </p>
+        </div>
+
+      </div>
+
+      <div class="map-wrap fade-up">
+        <iframe
+          src="https://maps.google.com/maps?q=Comazzo+LO+Italia&output=embed"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mappa Comazzo"
+        ></iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="text-align:center;">
+    <div class="container-sm">
+      <p style="font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--dark); margin-bottom:2rem;">
+        Tutto chiaro? Non dimenticare di confermare la tua presenza!
+      </p>
+      <a href="rsvp.html" class="btn">Conferma la Presenza 💌</a>
+    </div>
+  </section>
+
+  <footer>
+    <span class="script">Gianluca &amp; Sara</span>
+    <p>10 Dicembre 2026 · Peschiera Borromeo (MI)</p>
+    <p>Chiesa di San Riccardo Pampuri · ore 11:00</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

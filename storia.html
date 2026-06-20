@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Nostre Foto — Matrimonio G&S</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📷</text></svg>">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-brand">G & S</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="storia.html" class="active">Le Nostre Foto</a></li>
+      <li><a href="info.html">Info & Logistica</a></li>
+      <li><a href="rsvp.html">Conferma Presenza</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="page-header">
+    <span class="script">I nostri momenti più belli</span>
+    <h1>Le Nostre Foto</h1>
+    <p>Clicca su una foto per vederla ingrandita.</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div id="galleryGrid" class="gallery-grid"></div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="handleLightboxClick(event)">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <img class="lightbox-img" id="lbImg" src="" alt="">
+    <p class="lightbox-caption" id="lbCaption"></p>
+    <div class="lightbox-controls">
+      <button class="lb-btn" onclick="prevPhoto(); event.stopPropagation();">&#8592;</button>
+      <span class="lb-counter" id="lbCounter"></span>
+      <button class="lb-btn" onclick="nextPhoto(); event.stopPropagation();">&#8594;</button>
+    </div>
+  </div>
+
+  <footer>
+    <span class="script">Gianluca &amp; Sara</span>
+    <p>10 Dicembre 2026 · Peschiera Borromeo (MI)</p>
+    <p>Chiesa di San Riccardo Pampuri · ore 11:00</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    /*
+    ════════════════════════════════════════════════════
+     COME AGGIUNGERE FOTO
+
+     1. Metti le immagini nella cartella  matrimonio/foto/
+     2. Aggiungi un oggetto nell'array PHOTOS qui sotto:
+        { src: 'foto/nome-file.jpg', caption: 'La tua didascalia' }
+     3. Salva e aggiorna la pagina — la foto apparirà in griglia.
+
+     Formati supportati: JPG, PNG, WEBP, GIF
+    ════════════════════════════════════════════════════
+    */
+    const PHOTOS = [
+      /* Esempi — sostituisci con le tue foto:
+      { src: 'foto/foto1.jpg',  caption: 'Il nostro primo viaggio insieme' },
+      { src: 'foto/foto2.jpg',  caption: 'Una serata speciale' },
+      { src: 'foto/foto3.jpg',  caption: 'La proposta di matrimonio 💍' },
+      { src: 'foto/foto4.jpg',  caption: 'Con la nostra famiglia' },
+      { src: 'foto/foto5.jpg',  caption: 'In montagna, estate 2023' },
+      { src: 'foto/foto6.jpg',  caption: 'Un sorriso che vale tutto' },
+      */
+    ];
+
+    /* ── RENDER GALLERY ── */
+    let currentPhoto = 0;
+    const grid = document.getElementById('galleryGrid');
+
+    function renderGallery() {
+      if (PHOTOS.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--text);">
+            <div style="font-size:4rem; margin-bottom:1.5rem;">📸</div>
+            <h3 style="font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--dark); margin-bottom:0.75rem;">
+              Le foto arriveranno presto!
+            </h3>
+            <p style="max-width:400px; margin:0 auto; font-size:0.95rem; line-height:1.8;">
+              Stiamo preparando i nostri momenti più belli da condividere con voi.<br>
+              Tornate a trovarci!
+            </p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = PHOTOS.map((p, i) => `
+        <div class="gallery-item fade-up" onclick="openLightbox(${i})">
+          <img src="${p.src}" alt="${p.caption || ''}" loading="lazy"
+               onerror="this.parentElement.innerHTML='<div class=\\'gallery-placeholder\\'><div class=\\'ph-icon\\'>🖼️</div><p>${p.caption || 'Foto'}</p></div>'">
+          ${p.caption ? `<div class="gallery-caption">${p.caption}</div>` : ''}
+        </div>`).join('');
+
+      /* trigger scroll animations */
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+
+    /* ── LIGHTBOX ── */
+    function openLightbox(index) {
+      currentPhoto = index;
+      updateLightbox();
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function prevPhoto() {
+      currentPhoto = (currentPhoto - 1 + PHOTOS.length) % PHOTOS.length;
+      updateLightbox();
+    }
+
+    function nextPhoto() {
+      currentPhoto = (currentPhoto + 1) % PHOTOS.length;
+      updateLightbox();
+    }
+
+    function updateLightbox() {
+      const p = PHOTOS[currentPhoto];
+      document.getElementById('lbImg').src         = p.src;
+      document.getElementById('lbImg').alt         = p.caption || '';
+      document.getElementById('lbCaption').textContent = p.caption || '';
+      document.getElementById('lbCounter').textContent = `${currentPhoto + 1} / ${PHOTOS.length}`;
+    }
+
+    function handleLightboxClick(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (e.key === 'Escape')      closeLightbox();
+      if (e.key === 'ArrowLeft')   prevPhoto();
+      if (e.key === 'ArrowRight')  nextPhoto();
+    });
+
+    renderGallery();
+  </script>
+</body>
+</html>
