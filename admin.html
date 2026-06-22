@@ -475,6 +475,19 @@
     </div>
   </div>
 
+  <!-- MODAL NOTE -->
+  <div id="noteModal" style="display:none; position:fixed; inset:0; background:rgba(15,36,68,0.55); backdrop-filter:blur(4px); z-index:2000; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:var(--white); border-radius:14px; box-shadow:0 8px 40px rgba(15,36,68,0.18); padding:2rem; max-width:420px; width:100%;">
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--dark); margin-bottom:0.35rem;">Modifica Note</h3>
+      <p id="noteModalName" style="color:var(--text); font-size:0.9rem; margin-bottom:1rem; font-weight:700;"></p>
+      <textarea id="noteModalText" rows="4" style="width:100%; padding:0.7rem 0.9rem; border:1.5px solid #DDD0C0; border-radius:7px; font-family:'Lato',sans-serif; font-size:0.95rem; color:var(--dark); outline:none; resize:vertical; transition:all 0.2s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='#DDD0C0'" placeholder="es. vegetariano, allergia alle noci…"></textarea>
+      <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:1rem; flex-wrap:wrap;">
+        <button class="btn-sm" onclick="closeNoteModal()" style="color:var(--text);">Annulla</button>
+        <button class="btn" id="noteSaveBtn" onclick="saveNote()">Salva</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
@@ -687,7 +700,8 @@
           <td style="text-align:center;">${g.partecipa === 'si' ? g.numero : '—'}</td>
           <td style="color:var(--text); font-size:0.85rem;">${g.note || '—'}</td>
           <td style="color:var(--text); font-size:0.82rem; white-space:nowrap;">${formatDate(g.aggiunto)}</td>
-          <td>
+          <td style="white-space:nowrap;">
+            <button class="edit-btn" onclick="openNoteModal('${g.id}')" title="Modifica note">✏️</button>
             <button class="del-btn" onclick="deleteGuest('${g.id}')" title="Elimina">🗑</button>
           </td>
         </tr>`).join('');
@@ -740,6 +754,49 @@
       navigator.clipboard.writeText(lines)
         .then(() => showToast('Lista copiata negli appunti ✓'))
         .catch(() => showToast('Errore copia — prova da browser diverso'));
+    }
+
+    /* ── NOTE MODAL ── */
+    let editingGuestId = null;
+
+    function openNoteModal(id) {
+      const g = cachedGuests.find(g => String(g.id) === String(id));
+      if (!g) return;
+      editingGuestId = id;
+      document.getElementById('noteModalName').textContent =
+        `${(g.nome || '').toUpperCase()} ${(g.cognome || '').toUpperCase()}`;
+      document.getElementById('noteModalText').value = g.note || '';
+      document.getElementById('noteModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('noteModalText').focus(), 50);
+    }
+
+    function closeNoteModal() {
+      document.getElementById('noteModal').style.display = 'none';
+      editingGuestId = null;
+    }
+
+    async function saveNote() {
+      const g = cachedGuests.find(g => String(g.id) === String(editingGuestId));
+      if (!g) return;
+      const btn = document.getElementById('noteSaveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Salvataggio…';
+      try {
+        await api({
+          action: 'update',
+          nome: g.nome, cognome: g.cognome,
+          partecipa: g.partecipa, numero: g.numero,
+          note: document.getElementById('noteModalText').value.trim()
+        });
+        await loadGuests();
+        closeNoteModal();
+        showToast('Note aggiornate ✓');
+      } catch(err) {
+        showToast('Errore connessione');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Salva';
+      }
     }
 
     /* ── TOAST ── */
