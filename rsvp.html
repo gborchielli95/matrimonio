@@ -84,9 +84,10 @@
                 style="max-width:120px;"
               >
             </div>
-            <p style="font-size:0.88rem; color: var(--text); margin:0;">
+            <p style="font-size:0.88rem; color: var(--text); margin-bottom:1rem;">
               Inserisci il totale: tu + eventuali accompagnatori.
             </p>
+            <div id="additional-guests"></div>
           </div>
 
           <div class="form-group">
@@ -117,6 +118,20 @@
     <p>10 Dicembre 2026 · Peschiera Borromeo (MI)</p>
     <p>Chiesa di San Riccardo Pampuri · ore 11:00</p>
   </footer>
+
+  <!-- MODAL DUPLICATI -->
+  <div class="modal-overlay" id="duplicateModal" style="display:none;">
+    <div class="modal-card">
+      <h3 class="modal-title">Risposta già presente</h3>
+      <p class="modal-subtitle">Le seguenti persone hanno già risposto all'invito:</p>
+      <div id="duplicateList"></div>
+      <p class="modal-question">Vuoi aggiornare le loro risposte con i nuovi dati?</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modalCancel">No, annulla</button>
+        <button class="btn" id="modalConfirm">Sì, aggiorna</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
