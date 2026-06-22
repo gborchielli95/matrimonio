@@ -677,8 +677,8 @@
 
       const rows = list.map(g => `
         <tr>
-          <td><strong>${g.cognome}</strong></td>
-          <td>${g.nome}</td>
+          <td><strong>${(g.cognome || '').toUpperCase()}</strong></td>
+          <td>${(g.nome || '').toUpperCase()}</td>
           <td>
             <button onclick="cyclePartecipa('${g.id}')" title="Clicca per cambiare stato" style="background:none;border:none;cursor:pointer;padding:0;">
               ${badgeMap[g.partecipa] || ''}
