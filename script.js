@@ -64,7 +64,7 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   const rsvpForm = document.getElementById('rsvpForm');
   if (!rsvpForm) return;
 
-  const API_URL = 'https://script.google.com/macros/s/AKfycbzZT2zHDxXe6kvJHmpvwZYt2VvGzVKTsh2IxAGRTZl-bci0g2jM4ZrcQF8FVMCSKoMfJA/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzi_mvRk6nuwidrkZqiPf2wqMt8HRcCQtXoM9bAfpN5omiIvTGUdQA0KSW1gNI4pJqq/exec';
   const numInput = document.getElementById('numero_ospiti');
 
   /* mostra/nasconde sezione ospiti */
@@ -139,17 +139,15 @@ document.querySelectorAll('.faq-question').forEach(btn => {
     return res.json();
   }
 
-  async function submitPeople(people, dupSet) {
-    await Promise.all(people.map(p =>
-      apiGet({
-        action:    dupSet.has(`${p.nome}|${p.cognome}`) ? 'update' : 'add',
-        nome:      p.nome,
-        cognome:   p.cognome,
-        partecipa: p.partecipa,
-        numero:    1,
-        note:      p.note,
-      }).catch(() => {})
-    ));
+  async function submitPeople(people, forceUpdate) {
+    await apiGet({
+      action:      'submitAll',
+      people:      JSON.stringify(people.map(p => ({
+        nome: p.nome, cognome: p.cognome,
+        partecipa: p.partecipa, numero: 1, note: p.note,
+      }))),
+      forceUpdate: forceUpdate ? 'true' : 'false',
+    }).catch(() => {});
   }
 
   rsvpForm.addEventListener('submit', async function (e) {
@@ -217,10 +215,9 @@ document.querySelectorAll('.faq-question').forEach(btn => {
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Aggiornamento in corso…';
-      const dupSet = new Set(duplicates.map(d => `${d.nome}|${d.cognome}`));
-      await submitPeople(people, dupSet);
+      await submitPeople(people, true);
     } else {
-      await submitPeople(people, new Set());
+      await submitPeople(people, false);
     }
 
     showSuccess();
