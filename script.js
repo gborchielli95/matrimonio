@@ -64,7 +64,7 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   const rsvpForm = document.getElementById('rsvpForm');
   if (!rsvpForm) return;
 
-  const API_URL = 'https://script.google.com/macros/s/AKfycbyBaSb-kdWh7cP6DRZNwFVeAlAqdcDG5EifonlaqX4_iHKiNq-WTkV9iINunFUV8pl2Qw/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyKPuBdBA7yeTCEZ42fso6pD9Qnrz-Rz6SqIp4lMPEj3GdP5uisQNiwBfmnWDuErBF6vA/exec';
   const numInput = document.getElementById('numero_ospiti');
 
   /* mostra/nasconde sezione ospiti */
