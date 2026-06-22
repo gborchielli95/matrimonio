@@ -174,13 +174,23 @@ document.querySelectorAll('.faq-question').forEach(btn => {
 
     // controlla duplicati interni (stessa persona inserita due volte nel form)
     const seen = new Set();
+    const internalDups = [];
     for (const p of people) {
       const key = `${p.nome.toLowerCase()}|${p.cognome.toLowerCase()}`;
-      if (seen.has(key)) {
-        alert(`${p.nome} ${p.cognome} è inserito/a più volte.\nCorreggi i dati prima di procedere.`);
-        return;
-      }
-      seen.add(key);
+      if (seen.has(key)) internalDups.push(`${p.nome} ${p.cognome}`);
+      else seen.add(key);
+    }
+    if (internalDups.length > 0) {
+      document.getElementById('validationList').innerHTML = internalDups.map(name => `
+        <div class="duplicate-item">
+          <span>👤 <strong>${name}</strong></span>
+          <span class="duplicate-badge" style="background:#fff3e0;color:#e65100;">Duplicato</span>
+        </div>`).join('');
+      document.getElementById('validationModal').style.display = 'flex';
+      document.getElementById('validationClose').onclick = () => {
+        document.getElementById('validationModal').style.display = 'none';
+      };
+      return;
     }
 
     const submitBtn = document.getElementById('submitBtn');

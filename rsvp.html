@@ -119,6 +119,19 @@
     <p>Chiesa di San Riccardo Pampuri · ore 11:00</p>
   </footer>
 
+  <!-- MODAL DUPLICATI INTERNI (stessa persona inserita due volte) -->
+  <div class="modal-overlay" id="validationModal" style="display:none;">
+    <div class="modal-card">
+      <h3 class="modal-title">Persona inserita più volte</h3>
+      <p class="modal-subtitle">Le seguenti persone compaiono più di una volta nel form:</p>
+      <div id="validationList"></div>
+      <p class="modal-question">Correggi i dati prima di procedere.</p>
+      <div class="modal-actions">
+        <button class="btn" id="validationClose">Capito</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL DUPLICATI -->
   <div class="modal-overlay" id="duplicateModal" style="display:none;">
     <div class="modal-card">
