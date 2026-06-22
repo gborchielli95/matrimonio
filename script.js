@@ -170,11 +170,23 @@ document.querySelectorAll('.faq-question').forEach(btn => {
       }
     }
 
+    const people = collectPeople();
+
+    // controlla duplicati interni (stessa persona inserita due volte nel form)
+    const seen = new Set();
+    for (const p of people) {
+      const key = `${p.nome.toLowerCase()}|${p.cognome.toLowerCase()}`;
+      if (seen.has(key)) {
+        alert(`${p.nome} ${p.cognome} è inserito/a più volte.\nCorreggi i dati prima di procedere.`);
+        return;
+      }
+      seen.add(key);
+    }
+
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Verifica in corso…';
 
-    const people = collectPeople();
     let duplicates = [];
 
     try {
