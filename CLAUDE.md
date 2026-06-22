@@ -14,13 +14,12 @@ All pages share a single `style.css` and `script.js`. The CSS uses CSS custom pr
 |------|---------|
 | `index.html` | Home: hero, countdown, program, IBAN/gift list |
 | `storia.html` | Photo gallery with lightbox |
-| `info.html` | Logistics, maps, dress code |
+| `info.html` | Logistics, maps (church + restaurant) |
 | `rsvp.html` | RSVP form |
 | `lista-nozze.html` | Wedding gift list page — add new `info-card` blocks here as new list links are created |
 | `admin.html` | Private guest list manager (not committed to git — see below) |
 | `script.js` | Countdown, mobile nav, scroll animations, FAQ accordion, RSVP form handler |
 
-**Note:** `index.html` links to `faq.html` but that file does not exist yet.
 
 ## Backend: Google Apps Script
 
@@ -39,7 +38,7 @@ After any change to the Apps Script code, a new deployment must be created (Eseg
 
 ## Admin panel (`admin.html`)
 
-- Listed in `.gitignore` — not published on GitHub, lives only on the local PC
+- **Not** in `.gitignore` anymore — published on GitHub Pages at `/admin.html`
 - Login is verified server-side via `?action=verifyPassword` — no password in the source code
 - Reads/writes guest data via the Apps Script API using `fetch`
 - Dates returned from the API are ISO strings; `formatDate()` converts them to `dd/mm/yyyy`
