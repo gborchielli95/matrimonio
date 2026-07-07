@@ -10,56 +10,8 @@
     /* ── ADMIN-SPECIFIC ── */
     body { padding-top: 0; }
 
-    /* LOGIN */
-    .login-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(160deg, var(--ivory) 0%, var(--blush) 100%);
-      padding: 2rem;
-    }
-
-    .login-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 3rem 2.5rem;
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-    }
-
-    .login-card .script { font-size: 2.5rem; }
-    .login-card h2 { margin: 0.5rem 0 2rem; font-size: 1.2rem; color: var(--text); font-weight: 400; }
-
-    .login-card input[type="password"] {
-      width: 100%;
-      padding: 0.9rem 1.1rem;
-      border: 1.5px solid #DDD0C0;
-      border-radius: 8px;
-      font-family: 'Lato', sans-serif;
-      font-size: 1rem;
-      color: var(--dark);
-      outline: none;
-      margin-bottom: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .login-card input[type="password"]:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,168,108,0.15);
-    }
-
-    .login-error {
-      color: #c62828;
-      font-size: 0.88rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-
     /* ADMIN LAYOUT */
-    .admin-wrap { display: none; min-height: 100vh; background: #F4F0EA; }
+    .admin-wrap { display: block; min-height: 100vh; background: #F4F0EA; }
 
     .admin-header {
       background: var(--dark);
@@ -367,19 +319,6 @@
 </head>
 <body>
 
-  <!-- ── LOGIN ── -->
-  <div class="login-wrap" id="loginView">
-    <div class="login-card">
-      <span class="script">G &amp; S</span>
-      <h2>Area riservata — Lista Invitati</h2>
-      <form id="loginForm">
-        <input type="password" id="pwdInput" placeholder="Password" autocomplete="current-password">
-        <p class="login-error" id="loginError">Password errata. Riprova.</p>
-        <button type="submit" class="btn" style="width:100%;">Accedi</button>
-      </form>
-    </div>
-  </div>
-
   <!-- ── ADMIN ── -->
   <div class="admin-wrap" id="adminView">
 
@@ -392,7 +331,7 @@
       <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
         <button class="btn-sm" onclick="exportCSV()">⬇ Esporta CSV</button>
         <button class="btn-sm" onclick="exportText()">📋 Copia Lista</button>
-        <button class="btn-sm danger" onclick="logout()">Esci</button>
+        <button class="btn-sm" onclick="loadGuests()">↺ Aggiorna</button>
       </div>
     </div>
 
@@ -500,43 +439,7 @@
     let sortDir       = 1;
     let cachedGuests  = [];
 
-    /* ── AUTH ── */
-    document.getElementById('loginForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const pwd = document.getElementById('pwdInput').value;
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      btn.textContent = 'Verifica…';
-      try {
-        const result = await api({ action: 'verifyPassword', pwd });
-        if (result.ok) {
-          sessionStorage.setItem('admin_ok', '1');
-          showAdmin();
-        } else {
-          document.getElementById('loginError').style.display = 'block';
-          document.getElementById('pwdInput').value = '';
-          document.getElementById('pwdInput').focus();
-        }
-      } catch(err) {
-        document.getElementById('loginError').style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Accedi';
-      }
-    });
-
-    function logout() {
-      sessionStorage.removeItem('admin_ok');
-      location.reload();
-    }
-
-    if (sessionStorage.getItem('admin_ok') === '1') showAdmin();
-
-    function showAdmin() {
-      document.getElementById('loginView').style.display = 'none';
-      document.getElementById('adminView').style.display = 'block';
-      loadGuests();
-    }
+    loadGuests();
 
     /* ── API ── */
     async function api(params) {
